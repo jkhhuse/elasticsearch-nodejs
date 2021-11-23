@@ -17,8 +17,7 @@ const checkIndexExist = () => {
 const createIndexMapping = () => {
   return client.indices.putMapping({
     index: 'author-index',
-    type: 'record',
-    include_type_name: true,
+    include_type_name: false,
     ignore_unavailable: true,
     body: {
       properties: {
@@ -35,7 +34,6 @@ const createIndexMapping = () => {
 const addDoc = () => {
   return client.index({
     index: 'author-index',
-    type: 'record',
     id: 0,
     body: {
       author: 'John',
@@ -72,14 +70,14 @@ const dataset = [
 ];
 
 const bulkBody = dataset.flatMap((doc, index) => [
-  { index: { _index: 'author-index', _type: 'record', _id: index + 1 } },
+  { index: { _index: 'author-index', _type: '_doc', _id: index + 1 } },
   doc,
 ]);
 
 const bulkAddDocs = () => {
   return client.bulk({
     index: 'author-index',
-    type: 'record',
+    type: '_doc',
     refresh: true,
     body: bulkBody,
   });
@@ -88,7 +86,6 @@ const bulkAddDocs = () => {
 const updateIndex = () => {
   client.update({
     index: 'author-index',
-    type: 'record',
     id: 0,
     refresh: true,
     body: {
